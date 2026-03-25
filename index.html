@@ -4,58 +4,171 @@
 <meta charset="UTF-8">
 <title>SISTEMA DE INVENTARIO</title>
 
-<!-- Firebase v8 compatible -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-body{font-family:Arial;margin:0;background:#f5f5f5}
-header{background:#1d4ed8;color:#fff;padding:15px;text-align:center}
-.container{padding:20px}
-button{padding:10px;margin:5px;background:#1d4ed8;color:#fff;border:none;border-radius:5px;cursor:pointer}
-input,select{padding:8px;margin:5px}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border:1px solid #ccc;padding:6px;text-align:center}
-th{background:#facc15}
+body{
+  font-family:Arial;
+  margin:0;
+  background:#e5e7eb;
+}
+
+header{
+  background:linear-gradient(90deg,#facc15,#1d4ed8);
+  color:#fff;
+  padding:20px;
+  border-radius:15px;
+  margin:10px;
+}
+
+.header-content{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.header-content img{
+  height:60px;
+  background:#fff;
+  border-radius:10px;
+  padding:5px;
+}
+
+.header-text{
+  text-align:center;
+  flex:1;
+}
+
+.tabs{
+  display:flex;
+  justify-content:space-around;
+  margin:15px;
+}
+
+.tabs button{
+  background:#1d4ed8;
+  color:#fff;
+  border:none;
+  padding:12px 30px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.container{
+  background:#f3f4f6;
+  margin:20px;
+  padding:20px;
+  border-radius:15px;
+}
+
+input, select{
+  padding:10px;
+  margin:5px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+.actions button{
+  background:#1d4ed8;
+  color:#fff;
+  border:none;
+  padding:10px 15px;
+  margin:5px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.table-box{
+  margin-top:15px;
+}
+
+th{
+  background:#facc15;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  border:1px solid #ccc;
+  padding:8px;
+  text-align:center;
+}
 </style>
 </head>
 
 <body>
+
 <header>
-<h2>SISTEMA DE INVENTARIO</h2>
+  <div class="header-content">
+    <img src="logo1.png">
+    <div class="header-text">
+      <h2>SISTEMA DE INVENTARIO</h2>
+      <h3>INVENTARIO DE MATERIALES Y HERRAMIENTAS</h3>
+    </div>
+    <img src="logo2.png">
+  </div>
 </header>
+
+<div class="tabs">
+<button onclick="cambiarBodega('checc')">BODEGA CHECC</button>
+<button onclick="cambiarBodega('adinsa')">BODEGA ADINSA</button>
+<button onclick="cambiarBodega('acecorsa')">BODEGA ACECORSA</button>
+</div>
 
 <div class="container">
 
-<button onclick="cambiarBodega('checc')">CHECC</button>
-<button onclick="cambiarBodega('adinsa')">ADINSA</button>
-<button onclick="cambiarBodega('acecorsa')">ACECORSA</button>
+<h2 id="tituloBodega">CHECC</h2>
 
-<br><br>
+<input type="text" placeholder="Buscar..." id="buscar">
+
+<br>
 
 <input type="date" id="fecha">
+<select id="tipo">
+<option>Material</option>
+<option>Herramienta</option>
+</select>
 <input placeholder="Nombre" id="nombre">
 <select id="mov">
 <option>Ingreso</option>
 <option>Salida</option>
 </select>
 <input type="number" id="cant" placeholder="Cantidad">
+<input placeholder="Proyecto" id="proyecto">
+<input placeholder="Responsable" id="responsable">
 
+<div class="actions">
 <button onclick="guardar()">Guardar</button>
+<button onclick="limpiar()">Cancelar</button>
+<button onclick="exportarExcel()">Exportar Excel</button>
+</div>
 
+<div class="table-box">
 <table>
 <thead>
 <tr>
-<th>Fecha</th><th>Nombre</th><th>Mov</th><th>Cant</th><th>Stock</th>
+<th>Fecha</th>
+<th>Tipo</th>
+<th>Nombre</th>
+<th>Mov</th>
+<th>Cant</th>
+<th>Proyecto</th>
+<th>Resp</th>
+<th>Stock</th>
 </tr>
 </thead>
 <tbody id="tabla"></tbody>
 </table>
 </div>
 
-<script>
+</div>
 
-// ✅ TU CONFIG REAL (YA CORREGIDA)
+<script>
 var firebaseConfig = {
   apiKey: "AIzaSyDDUb0tp0llWLwZ875YgGc_7hMCP-KHKXk",
   authDomain: "inventario-94526.firebaseapp.com",
@@ -71,29 +184,31 @@ var refActual = null;
 
 function cambiarBodega(b){
   bodega = b;
+  document.getElementById('tituloBodega').innerText = b.toUpperCase();
   escuchar();
 }
 
 function guardar(){
   var data = {
     fecha: document.getElementById('fecha').value,
+    tipo: document.getElementById('tipo').value,
     nombre: document.getElementById('nombre').value,
     mov: document.getElementById('mov').value,
-    cant: Number(document.getElementById('cant').value)
+    cant: Number(document.getElementById('cant').value),
+    proyecto: document.getElementById('proyecto').value,
+    responsable: document.getElementById('responsable').value
   };
 
-  console.log("Guardando en:", bodega);
-  console.log("Datos:", data);
-
-  if(!data.nombre || !data.cant){
-    alert('Completa los campos');
-    return;
-  }
-
   db.ref(bodega).push(data);
+}
 
+function limpiar(){
   document.getElementById('nombre').value='';
   document.getElementById('cant').value='';
+}
+
+function exportarExcel(){
+  alert('Función de exportar en proceso');
 }
 
 function escuchar(){
@@ -107,8 +222,6 @@ function escuchar(){
   refActual.on('value', function(snap){
     var datos = snap.val() || {};
     var arr = Object.values(datos);
-
-    console.log("Datos recibidos:", arr);
 
     var tabla = document.getElementById('tabla');
     tabla.innerHTML = '';
@@ -126,18 +239,21 @@ function escuchar(){
 
       tabla.innerHTML += '<tr>'+
       '<td>'+arr[i].fecha+'</td>'+
+      '<td>'+arr[i].tipo+'</td>'+
       '<td>'+arr[i].nombre+'</td>'+
       '<td>'+arr[i].mov+'</td>'+
       '<td>'+arr[i].cant+'</td>'+
+      '<td>'+arr[i].proyecto+'</td>'+
+      '<td>'+arr[i].responsable+'</td>'+
       '<td>'+stock+'</td>'+
       '</tr>';
     }
   });
 }
 
-// iniciar
 escuchar();
-
 </script>
+
 </body>
 </html>
+
