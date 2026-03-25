@@ -228,8 +228,11 @@ var filtro = document.getElementById('buscar').value.toLowerCase();
 
 // FILTRAR RESULTADOS
 arr = arr.filter(function(item){
-  return item.nombre.toLowerCase().includes(filtro);
-});
+  return (
+  item.nombre.toLowerCase().includes(filtro) ||
+  item.proyecto.toLowerCase().includes(filtro) ||
+  item.responsable.toLowerCase().includes(filtro)
+);
 
     var tabla = document.getElementById('tabla');
     tabla.innerHTML = '';
