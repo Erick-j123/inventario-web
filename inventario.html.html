@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>SISTEMA DE INVENTARIO</title>
+
+<!-- Firebase v8 compatible -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<style>
+body{font-family:Arial;margin:0;background:#f5f5f5}
+header{background:#1d4ed8;color:#fff;padding:15px;text-align:center}
+.container{padding:20px}
+button{padding:10px;margin:5px;background:#1d4ed8;color:#fff;border:none;border-radius:5px;cursor:pointer}
+input,select{padding:8px;margin:5px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #ccc;padding:6px;text-align:center}
+th{background:#facc15}
+</style>
+</head>
+
+<body>
+<header>
+<h2>SISTEMA DE INVENTARIO</h2>
+</header>
+
+<div class="container">
+
+<button onclick="cambiarBodega('checc')">CHECC</button>
+<button onclick="cambiarBodega('adinsa')">ADINSA</button>
+<button onclick="cambiarBodega('acecorsa')">ACECORSA</button>
+
+<br><br>
+
+<input type="date" id="fecha">
+<input placeholder="Nombre" id="nombre">
+<select id="mov">
+<option>Ingreso</option>
+<option>Salida</option>
+</select>
+<input type="number" id="cant" placeholder="Cantidad">
+
+<button onclick="guardar()">Guardar</button>
+
+<table>
+<thead>
+<tr>
+<th>Fecha</th><th>Nombre</th><th>Mov</th><th>Cant</th><th>Stock</th>
+</tr>
+</thead>
+<tbody id="tabla"></tbody>
+</table>
+</div>
+
+<script>
+
+// ✅ TU CONFIG REAL (YA CORREGIDA)
+var firebaseConfig = {
+  apiKey: "AIzaSyDDUb0tp0llWLwZ875YgGc_7hMCP-KHKXk",
+  authDomain: "inventario-94526.firebaseapp.com",
+  databaseURL: "https://inventario-94526-default-rtdb.firebaseio.com",
+  projectId: "inventario-94526"
+};
+
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+var bodega = 'checc';
+var refActual = null;
+
+function cambiarBodega(b){
+  bodega = b;
+  escuchar();
+}
+
+function guardar(){
+  var data = {
+    fecha: document.getElementById('fecha').value,
+    nombre: document.getElementById('nombre').value,
+    mov: document.getElementById('mov').value,
+    cant: Number(document.getElementById('cant').value)
+  };
+
+  console.log("Guardando en:", bodega);
+  console.log("Datos:", data);
+
+  if(!data.nombre || !data.cant){
+    alert('Completa los campos');
+    return;
+  }
+
+  db.ref(bodega).push(data);
+
+  document.getElementById('nombre').value='';
+  document.getElementById('cant').value='';
+}
+
+function escuchar(){
+
+  if(refActual){
+    refActual.off();
+  }
+
+  refActual = db.ref(bodega);
+
+  refActual.on('value', function(snap){
+    var datos = snap.val() || {};
+    var arr = Object.values(datos);
+
+    console.log("Datos recibidos:", arr);
+
+    var tabla = document.getElementById('tabla');
+    tabla.innerHTML = '';
+
+    for(var i=0;i<arr.length;i++){
+
+      var stock = 0;
+
+      for(var j=0;j<=i;j++){
+        if(arr[j].nombre === arr[i].nombre){
+          if(arr[j].mov === 'Ingreso') stock += arr[j].cant;
+          else stock -= arr[j].cant;
+        }
+      }
+
+      tabla.innerHTML += '<tr>'+
+      '<td>'+arr[i].fecha+'</td>'+
+      '<td>'+arr[i].nombre+'</td>'+
+      '<td>'+arr[i].mov+'</td>'+
+      '<td>'+arr[i].cant+'</td>'+
+      '<td>'+stock+'</td>'+
+      '</tr>';
+    }
+  });
+}
+
+// iniciar
+escuchar();
+
+</script>
+</body>
+</html>
