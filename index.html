@@ -124,7 +124,7 @@ th,td{
 
 <h2 id="tituloBodega">CHECC</h2>
 
-<input type="text" placeholder="Buscar..." id="buscar">
+<input type="text" placeholder="Buscar..." id="buscar" onkeyup="escuchar()>
 
 <br>
 
@@ -220,8 +220,16 @@ function escuchar(){
   refActual = db.ref(bodega);
 
   refActual.on('value', function(snap){
-    var datos = snap.val() || {};
-    var arr = Object.values(datos);
+   var datos = snap.val() || {};
+var arr = Object.values(datos);
+
+// 🔍 TEXTO DEL BUSCADOR
+var filtro = document.getElementById('buscar').value.toLowerCase();
+
+// FILTRAR RESULTADOS
+arr = arr.filter(function(item){
+  return item.nombre.toLowerCase().includes(filtro);
+});
 
     var tabla = document.getElementById('tabla');
     tabla.innerHTML = '';
