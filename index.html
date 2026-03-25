@@ -105,12 +105,12 @@ th,td{
 
 <header>
   <div class="header-content">
-    <img src="IMG_3638.jpg">
+    <img src="logo1.png">
     <div class="header-text">
       <h2>SISTEMA DE INVENTARIO</h2>
       <h3>INVENTARIO DE MATERIALES Y HERRAMIENTAS</h3>
     </div>
-    <img src="IMG_3516.jpg">
+    <img src="logo2.png">
   </div>
 </header>
 
@@ -124,7 +124,7 @@ th,td{
 
 <h2 id="tituloBodega">CHECC</h2>
 
-<input type="text" placeholder="Buscar..." id="buscar" onkeyup="escuchar()>
+<input type="text" placeholder="Buscar..." id="buscar">
 
 <br>
 
@@ -220,19 +220,8 @@ function escuchar(){
   refActual = db.ref(bodega);
 
   refActual.on('value', function(snap){
-   var datos = snap.val() || {};
-var arr = Object.values(datos);
-
-// 🔍 TEXTO DEL BUSCADOR
-var filtro = document.getElementById('buscar').value.toLowerCase();
-
-// FILTRAR RESULTADOS
-arr = arr.filter(function(item){
-  return (
-  item.nombre.toLowerCase().includes(filtro) ||
-  item.proyecto.toLowerCase().includes(filtro) ||
-  item.responsable.toLowerCase().includes(filtro)
-);
+    var datos = snap.val() || {};
+    var arr = Object.values(datos);
 
     var tabla = document.getElementById('tabla');
     tabla.innerHTML = '';
@@ -267,4 +256,3 @@ escuchar();
 
 </body>
 </html>
-
