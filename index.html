@@ -89,15 +89,21 @@ function limpiar(){nombre.value='';cant.value='';}
 
 function eliminar(id){if(confirm('Eliminar registro?'))db.ref(bodega+'/'+id).remove();}
 
-function editar(id,data){
-nombre.value=data.nombre;
-cant.value=data.cant;
-tipo.value=data.tipo;
-mov.value=data.mov;
-proyecto.value=data.proyecto;
-responsable.value=data.responsable;
+var idEditando = null;
 
-eliminar(id);
+function editar(id){
+  db.ref(bodega + '/' + id).once('value', function(snap){
+    var data = snap.val();
+
+    document.getElementById('nombre').value = data.nombre;
+    document.getElementById('cant').value = data.cant;
+    document.getElementById('tipo').value = data.tipo;
+    document.getElementById('mov').value = data.mov;
+    document.getElementById('proyecto').value = data.proyecto;
+    document.getElementById('responsable').value = data.responsable;
+
+    idEditando = id;
+  });
 }
 
 function escuchar(){
