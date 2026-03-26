@@ -81,8 +81,11 @@ function cambiarBodega(b){bodega=b;document.getElementById('tituloBodega').inner
 function guardar(){
 var data={fecha:fecha.value,tipo:tipo.value,nombre:nombre.value,mov:mov.value,cant:Number(cant.value),proyecto:proyecto.value,responsable:responsable.value};
 if(!data.nombre||!data.cant)return alert('Completa campos');
-db.ref(bodega).push(data);
-limpiar();
+if(idEditando){
+  db.ref(bodega + '/' + idEditando).set(data);
+  idEditando = null;
+}else{
+  db.ref(bodega).push(data);
 }
 
 function limpiar(){nombre.value='';cant.value='';}
@@ -156,7 +159,7 @@ var fila='<tr>'+
 '<td>'+item.responsable+'</td>'+
 '<td>'+stock+'</td>'+
 '<td>'+
-'<button onclick="editar(\''+id+'\','+JSON.stringify(item)+')">Editar</button>'+
+'<button onclick="editar(\''+id+'\')">Editar</button>'+
 '<br>'+
 '<button onclick="eliminar(\''+id+'\')">Eliminar</button>'+
 '</td>'+
