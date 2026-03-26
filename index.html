@@ -75,37 +75,39 @@ var db=firebase.database();
 
 var bodega='checc';
 var refActual=null;
+var idEditando=null;
 
 function cambiarBodega(b){bodega=b;document.getElementById('tituloBodega').innerText=b.toUpperCase();escuchar();}
 
 function guardar(){
 var data={fecha:fecha.value,tipo:tipo.value,nombre:nombre.value,mov:mov.value,cant:Number(cant.value),proyecto:proyecto.value,responsable:responsable.value};
 if(!data.nombre||!data.cant)return alert('Completa campos');
+
 if(idEditando){
-  db.ref(bodega + '/' + idEditando).set(data);
-  idEditando = null;
+  db.ref(bodega+'/'+idEditando).set(data);
+  idEditando=null;
 }else{
   db.ref(bodega).push(data);
+}
+
+limpiar();
 }
 
 function limpiar(){nombre.value='';cant.value='';}
 
 function eliminar(id){if(confirm('Eliminar registro?'))db.ref(bodega+'/'+id).remove();}
 
-var idEditando = null;
-
 function editar(id){
-  db.ref(bodega + '/' + id).once('value', function(snap){
-    var data = snap.val();
-
-    document.getElementById('nombre').value = data.nombre;
-    document.getElementById('cant').value = data.cant;
-    document.getElementById('tipo').value = data.tipo;
-    document.getElementById('mov').value = data.mov;
-    document.getElementById('proyecto').value = data.proyecto;
-    document.getElementById('responsable').value = data.responsable;
-
-    idEditando = id;
+  db.ref(bodega+'/'+id).once('value',function(snap){
+    var data=snap.val();
+    fecha.value=data.fecha;
+    tipo.value=data.tipo;
+    nombre.value=data.nombre;
+    mov.value=data.mov;
+    cant.value=data.cant;
+    proyecto.value=data.proyecto;
+    responsable.value=data.responsable;
+    idEditando=id;
   });
 }
 
@@ -118,7 +120,6 @@ var datos=snap.val()||{};
 var keys=Object.keys(datos);
 var arr=Object.values(datos);
 
-// BUSCADOR
 var filtro=buscar.value.toLowerCase();
 
 var tabla=document.getElementById('tabla');
@@ -129,25 +130,22 @@ var stockGlobal={};
 for(var i=0;i<arr.length;i++){
 var item=arr[i];
 
-// FILTRO
 if(!item.nombre.toLowerCase().includes(filtro)) continue;
 
-// CONTROL STOCK CORREGIDO
 if(!stockGlobal[item.nombre]) stockGlobal[item.nombre]=0;
 
 if(item.mov==='Ingreso'){
-stockGlobal[item.nombre]+=item.cant;
+  stockGlobal[item.nombre]+=item.cant;
 }else{
-if(stockGlobal[item.nombre]-item.cant<0){
-alert('No hay suficiente stock para '+item.nombre);
-continue;
-}
-stockGlobal[item.nombre]-=item.cant;
+  if(stockGlobal[item.nombre]>=item.cant){
+    stockGlobal[item.nombre]-=item.cant;
+  }
 }
 
 var stock=stockGlobal[item.nombre];
-
 var id=keys[i];
+
+var color = stock <= 4 ? 'red' : 'black';
 
 var fila='<tr>'+
 '<td>'+item.fecha+'</td>'+
@@ -157,10 +155,9 @@ var fila='<tr>'+
 '<td>'+item.cant+'</td>'+
 '<td>'+item.proyecto+'</td>'+
 '<td>'+item.responsable+'</td>'+
-'<td>'+stock+'</td>'+
+'<td style="font-weight:bold;color:'+color+'">'+stock+'</td>'+
 '<td>'+
-'<button onclick="editar(\''+id+'\')">Editar</button>'+
-'<br>'+
+'<button onclick="editar(\''+id+'\')">Editar</button><br>'+
 '<button onclick="eliminar(\''+id+'\')">Eliminar</button>'+
 '</td>'+
 '</tr>';
