@@ -8,110 +8,32 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-body{
-  font-family:Arial;
-  margin:0;
-  background:#e5e7eb;
-}
-
-header{
-  background:linear-gradient(90deg,#facc15,#1d4ed8);
-  color:#fff;
-  padding:20px;
-  border-radius:15px;
-  margin:10px;
-}
-
-.header-content{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.header-content img{
-  height:60px;
-  background:#fff;
-  border-radius:10px;
-  padding:5px;
-}
-
-.header-text{
-  text-align:center;
-  flex:1;
-}
-
-.tabs{
-  display:flex;
-  justify-content:space-around;
-  margin:15px;
-}
-
-.tabs button{
-  background:#1d4ed8;
-  color:#fff;
-  border:none;
-  padding:12px 30px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.container{
-  background:#f3f4f6;
-  margin:20px;
-  padding:20px;
-  border-radius:15px;
-}
-
-input, select{
-  padding:10px;
-  margin:5px;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
-
-.actions button{
-  background:#1d4ed8;
-  color:#fff;
-  border:none;
-  padding:10px 15px;
-  margin:5px;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-.table-box{
-  margin-top:15px;
-}
-
-th{
-  background:#facc15;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th,td{
-  border:1px solid #ccc;
-  padding:8px;
-  text-align:center;
-}
+body{font-family:Arial;margin:0;background:#e5e7eb}
+header{background:linear-gradient(90deg,#facc15,#1d4ed8);color:#fff;padding:20px;border-radius:15px;margin:10px}
+.header-content{display:flex;justify-content:space-between;align-items:center}
+.header-content img{height:60px;background:#fff;border-radius:10px;padding:5px}
+.header-text{text-align:center;flex:1}
+.tabs{display:flex;justify-content:space-around;margin:15px}
+.tabs button{background:#1d4ed8;color:#fff;border:none;padding:12px 30px;border-radius:10px;font-weight:bold;cursor:pointer}
+.container{background:#f3f4f6;margin:20px;padding:20px;border-radius:15px}
+input,select{padding:10px;margin:5px;border-radius:8px;border:1px solid #ccc}
+.actions button{background:#1d4ed8;color:#fff;border:none;padding:10px 15px;margin:5px;border-radius:8px;cursor:pointer}
+th{background:#facc15}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #ccc;padding:8px;text-align:center}
 </style>
 </head>
 
 <body>
-
 <header>
-  <div class="header-content">
-    <img src="IMG_3516.jpg">
-    <div class="header-text">
-      <h2>SISTEMA DE INVENTARIO</h2>
-      <h3>INVENTARIO DE MATERIALES Y HERRAMIENTAS</h3>
-    </div>
-    <img src="IMG_3638.jpg">
-  </div>
+<div class="header-content">
+<img src="IMG_3638.jpg">
+<div class="header-text">
+<h2>SISTEMA DE INVENTARIO</h2>
+<h3>INVENTARIO DE MATERIALES Y HERRAMIENTAS</h3>
+</div>
+<img src="IMG_3516.jpg">
+</div>
 </header>
 
 <div class="tabs">
@@ -121,138 +43,125 @@ th,td{
 </div>
 
 <div class="container">
-
 <h2 id="tituloBodega">CHECC</h2>
-
-<input type="text" placeholder="Buscar..." id="buscar">
-
+<input type="text" placeholder="Buscar..." id="buscar" onkeyup="escuchar()">
 <br>
-
 <input type="date" id="fecha">
-<select id="tipo">
-<option>Material</option>
-<option>Herramienta</option>
-</select>
+<select id="tipo"><option>Material</option><option>Herramienta</option></select>
 <input placeholder="Nombre" id="nombre">
-<select id="mov">
-<option>Ingreso</option>
-<option>Salida</option>
-</select>
+<select id="mov"><option>Ingreso</option><option>Salida</option></select>
 <input type="number" id="cant" placeholder="Cantidad">
 <input placeholder="Proyecto" id="proyecto">
 <input placeholder="Responsable" id="responsable">
-
 <div class="actions">
 <button onclick="guardar()">Guardar</button>
 <button onclick="limpiar()">Cancelar</button>
-<button onclick="exportarExcel()">Exportar Excel</button>
 </div>
 
-<div class="table-box">
 <table>
 <thead>
 <tr>
-<th>Fecha</th>
-<th>Tipo</th>
-<th>Nombre</th>
-<th>Mov</th>
-<th>Cant</th>
-<th>Proyecto</th>
-<th>Resp</th>
-<th>Stock</th>
+<th>Fecha</th><th>Tipo</th><th>Nombre</th><th>Mov</th><th>Cant</th><th>Proyecto</th><th>Resp</th><th>Stock</th><th>Acciones</th>
 </tr>
 </thead>
 <tbody id="tabla"></tbody>
 </table>
 </div>
 
-</div>
-
 <script>
-var firebaseConfig = {
-  apiKey: "AIzaSyDDUb0tp0llWLwZ875YgGc_7hMCP-KHKXk",
-  authDomain: "inventario-94526.firebaseapp.com",
-  databaseURL: "https://inventario-94526-default-rtdb.firebaseio.com",
-  projectId: "inventario-94526"
-};
-
+var firebaseConfig={apiKey:"AIzaSyDDUb0tp0llWLwZ875YgGc_7hMCP-KHKXk",authDomain:"inventario-94526.firebaseapp.com",databaseURL:"https://inventario-94526-default-rtdb.firebaseio.com",projectId:"inventario-94526"};
 firebase.initializeApp(firebaseConfig);
-var db = firebase.database();
+var db=firebase.database();
 
-var bodega = 'checc';
-var refActual = null;
+var bodega='checc';
+var refActual=null;
 
-function cambiarBodega(b){
-  bodega = b;
-  document.getElementById('tituloBodega').innerText = b.toUpperCase();
-  escuchar();
-}
+function cambiarBodega(b){bodega=b;document.getElementById('tituloBodega').innerText=b.toUpperCase();escuchar();}
 
 function guardar(){
-  var data = {
-    fecha: document.getElementById('fecha').value,
-    tipo: document.getElementById('tipo').value,
-    nombre: document.getElementById('nombre').value,
-    mov: document.getElementById('mov').value,
-    cant: Number(document.getElementById('cant').value),
-    proyecto: document.getElementById('proyecto').value,
-    responsable: document.getElementById('responsable').value
-  };
-
-  db.ref(bodega).push(data);
+var data={fecha:fecha.value,tipo:tipo.value,nombre:nombre.value,mov:mov.value,cant:Number(cant.value),proyecto:proyecto.value,responsable:responsable.value};
+if(!data.nombre||!data.cant)return alert('Completa campos');
+db.ref(bodega).push(data);
+limpiar();
 }
 
-function limpiar(){
-  document.getElementById('nombre').value='';
-  document.getElementById('cant').value='';
-}
+function limpiar(){nombre.value='';cant.value='';}
 
-function exportarExcel(){
-  alert('Función de exportar en proceso');
+function eliminar(id){if(confirm('Eliminar registro?'))db.ref(bodega+'/'+id).remove();}
+
+function editar(id,data){
+nombre.value=data.nombre;
+cant.value=data.cant;
+tipo.value=data.tipo;
+mov.value=data.mov;
+proyecto.value=data.proyecto;
+responsable.value=data.responsable;
+
+eliminar(id);
 }
 
 function escuchar(){
+if(refActual){refActual.off();}
+refActual=db.ref(bodega);
 
-  if(refActual){
-    refActual.off();
-  }
+refActual.on('value',function(snap){
+var datos=snap.val()||{};
+var keys=Object.keys(datos);
+var arr=Object.values(datos);
 
-  refActual = db.ref(bodega);
+// BUSCADOR
+var filtro=buscar.value.toLowerCase();
 
-  refActual.on('value', function(snap){
-    var datos = snap.val() || {};
-    var arr = Object.values(datos);
+var tabla=document.getElementById('tabla');
+tabla.innerHTML='';
 
-    var tabla = document.getElementById('tabla');
-    tabla.innerHTML = '';
+var stockGlobal={};
 
-    for(var i=0;i<arr.length;i++){
+for(var i=0;i<arr.length;i++){
+var item=arr[i];
 
-      var stock = 0;
+// FILTRO
+if(!item.nombre.toLowerCase().includes(filtro)) continue;
 
-      for(var j=0;j<=i;j++){
-        if(arr[j].nombre === arr[i].nombre){
-          if(arr[j].mov === 'Ingreso') stock += arr[j].cant;
-          else stock -= arr[j].cant;
-        }
-      }
+// CONTROL STOCK CORREGIDO
+if(!stockGlobal[item.nombre]) stockGlobal[item.nombre]=0;
 
-      tabla.innerHTML += '<tr>'+
-      '<td>'+arr[i].fecha+'</td>'+
-      '<td>'+arr[i].tipo+'</td>'+
-      '<td>'+arr[i].nombre+'</td>'+
-      '<td>'+arr[i].mov+'</td>'+
-      '<td>'+arr[i].cant+'</td>'+
-      '<td>'+arr[i].proyecto+'</td>'+
-      '<td>'+arr[i].responsable+'</td>'+
-      '<td>'+stock+'</td>'+
-      '</tr>';
-    }
-  });
+if(item.mov==='Ingreso'){
+stockGlobal[item.nombre]+=item.cant;
+}else{
+if(stockGlobal[item.nombre]-item.cant<0){
+alert('No hay suficiente stock para '+item.nombre);
+continue;
+}
+stockGlobal[item.nombre]-=item.cant;
+}
+
+var stock=stockGlobal[item.nombre];
+
+var id=keys[i];
+
+var fila='<tr>'+
+'<td>'+item.fecha+'</td>'+
+'<td>'+item.tipo+'</td>'+
+'<td>'+item.nombre+'</td>'+
+'<td>'+item.mov+'</td>'+
+'<td>'+item.cant+'</td>'+
+'<td>'+item.proyecto+'</td>'+
+'<td>'+item.responsable+'</td>'+
+'<td>'+stock+'</td>'+
+'<td>'+
+'<button onclick="editar(\''+id+'\','+JSON.stringify(item)+')">Editar</button>'+
+'<br>'+
+'<button onclick="eliminar(\''+id+'\')">Eliminar</button>'+
+'</td>'+
+'</tr>';
+
+tabla.innerHTML+=fila;
+}
+});
 }
 
 escuchar();
 </script>
-
 </body>
 </html>
