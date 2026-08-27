@@ -8,166 +8,1090 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-body{font-family:Arial;margin:0;background:#e5e7eb}
-header{background:linear-gradient(90deg,#facc15,#1d4ed8);color:#fff;padding:20px;border-radius:15px;margin:10px}
-.header-content{display:flex;justify-content:space-between;align-items:center}
-.header-content img{height:60px;background:#fff;border-radius:10px;padding:5px}
-.header-text{text-align:center;flex:1}
-.tabs{display:flex;justify-content:space-around;margin:15px}
-.tabs button{background:#1d4ed8;color:#fff;border:none;padding:12px 30px;border-radius:10px;font-weight:bold;cursor:pointer}
-.container{background:#f3f4f6;margin:20px;padding:20px;border-radius:15px}
-input,select{padding:10px;margin:5px;border-radius:8px;border:1px solid #ccc}
-.actions button{background:#1d4ed8;color:#fff;border:none;padding:10px 15px;margin:5px;border-radius:8px;cursor:pointer}
-th{background:#facc15}
-table{width:100%;border-collapse:collapse}
-th,td{border:1px solid #ccc;padding:8px;text-align:center}
+
+body{
+  font-family:Arial;
+  margin:0;
+  background:#e5e7eb;
+}
+
+header{
+  background:linear-gradient(90deg,#facc15,#1d4ed8);
+  color:#fff;
+  padding:20px;
+  border-radius:15px;
+  margin:10px;
+}
+
+.header-content{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.header-content img{
+  height:60px;
+  background:#fff;
+  border-radius:10px;
+  padding:5px;
+}
+
+.header-text{
+  text-align:center;
+  flex:1;
+}
+
+.tabs{
+  display:flex;
+  justify-content:space-around;
+  margin:15px;
+  gap:10px;
+}
+
+.tabs button{
+  background:#1d4ed8;
+  color:#fff;
+  border:none;
+  padding:12px 30px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.tabs button:hover{
+  background:#153ea8;
+}
+
+.container{
+  background:#f3f4f6;
+  margin:20px;
+  padding:20px;
+  border-radius:15px;
+}
+
+input,select{
+  padding:10px;
+  margin:5px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+.actions button{
+  background:#1d4ed8;
+  color:#fff;
+  border:none;
+  padding:10px 15px;
+  margin:5px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.actions button:hover{
+  background:#153ea8;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+
+th{
+  background:#facc15;
+}
+
+th,td{
+  border:1px solid #ccc;
+  padding:8px;
+  text-align:center;
+}
+
+.btn-editar{
+  background:#2563eb;
+  color:white;
+  border:none;
+  padding:7px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  margin-bottom:5px;
+}
+
+.btn-eliminar{
+  background:#dc2626;
+  color:white;
+  border:none;
+  padding:7px 12px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.btn-editar:hover{
+  background:#1d4ed8;
+}
+
+.btn-eliminar:hover{
+  background:#b91c1c;
+}
+
+.stock-bajo{
+  color:red;
+  font-weight:bold;
+}
+
+.stock-normal{
+  color:black;
+  font-weight:bold;
+}
+
+.aviso-stock{
+  background:#fee2e2;
+  color:#991b1b;
+  border:1px solid #ef4444;
+  padding:10px;
+  border-radius:8px;
+  margin-top:10px;
+  font-weight:bold;
+  display:none;
+}
+
+.modo-edicion{
+  background:#dbeafe;
+  color:#1e40af;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:10px;
+  display:none;
+  font-weight:bold;
+}
+
 </style>
 </head>
 
 <body>
+
 <header>
+
 <div class="header-content">
+
 <img src="IMG_3638.jpg">
+
 <div class="header-text">
+
 <h2>SISTEMA DE INVENTARIO</h2>
+
 <h3>INVENTARIO DE MATERIALES Y HERRAMIENTAS</h3>
+
 </div>
+
 <img src="IMG_3516.jpg">
+
 </div>
+
 </header>
 
+
 <div class="tabs">
-<button onclick="cambiarBodega('checc')">BODEGA CHECC</button>
-<button onclick="cambiarBodega('adinsa')">BODEGA ADINSA</button>
-<button onclick="cambiarBodega('acecorsa')">BODEGA ACECORSA</button>
+
+<button onclick="cambiarBodega('checc')">
+BODEGA CHECC
+</button>
+
+<button onclick="cambiarBodega('adinsa')">
+BODEGA ADINSA
+</button>
+
+<button onclick="cambiarBodega('acecorsa')">
+BODEGA ACECORSA
+</button>
+
 </div>
+
 
 <div class="container">
-<h2 id="tituloBodega">CHECC</h2>
-<input type="text" placeholder="Buscar..." id="buscar" onkeyup="escuchar()">
-<br>
-<input type="date" id="fecha">
-<select id="tipo"><option>Material</option><option>Herramienta</option></select>
-<input placeholder="Nombre" id="nombre">
-<select id="mov"><option>Ingreso</option><option>Salida</option></select>
-<input type="number" id="cant" placeholder="Cantidad">
-<input placeholder="Proyecto" id="proyecto">
-<input placeholder="Responsable" id="responsable">
-<div class="actions">
-<button onclick="guardar()">Guardar</button>
-<button onclick="limpiar()">Cancelar</button>
+
+<h2 id="tituloBodega">
+CHECC
+</h2>
+
+
+<div id="modoEdicion" class="modo-edicion">
+✏️ MODO EDICIÓN: estás modificando un registro existente.
 </div>
+
+
+<input
+type="text"
+placeholder="Buscar artículo..."
+id="buscar"
+onkeyup="escuchar()"
+>
+
+
+<br>
+
+
+<input
+type="date"
+id="fecha"
+>
+
+
+<select id="tipo">
+
+<option value="Material">
+Material
+</option>
+
+<option value="Herramienta">
+Herramienta
+</option>
+
+</select>
+
+
+<input
+placeholder="Nombre"
+id="nombre"
+>
+
+
+<select id="mov">
+
+<option value="Ingreso">
+Ingreso
+</option>
+
+<option value="Salida">
+Salida
+</option>
+
+</select>
+
+
+<input
+type="number"
+id="cant"
+placeholder="Cantidad"
+min="1"
+>
+
+
+<input
+placeholder="Proyecto"
+id="proyecto"
+>
+
+
+<input
+placeholder="Responsable"
+id="responsable"
+>
+
+
+<div class="actions">
+
+<button onclick="guardar()">
+Guardar
+</button>
+
+<button onclick="limpiar()">
+Cancelar
+</button>
+
+</div>
+
+
+<div id="avisoStock" class="aviso-stock"></div>
+
 
 <table>
+
 <thead>
+
 <tr>
-<th>Fecha</th><th>Tipo</th><th>Nombre</th><th>Mov</th><th>Cant</th><th>Proyecto</th><th>Resp</th><th>Stock</th><th>Acciones</th>
+
+<th>
+Fecha
+</th>
+
+<th>
+Tipo
+</th>
+
+<th>
+Nombre
+</th>
+
+<th>
+Mov
+</th>
+
+<th>
+Cant
+</th>
+
+<th>
+Proyecto
+</th>
+
+<th>
+Resp
+</th>
+
+<th>
+Stock actual
+</th>
+
+<th>
+Acciones
+</th>
+
 </tr>
+
 </thead>
-<tbody id="tabla"></tbody>
+
+
+<tbody id="tabla">
+
+</tbody>
+
 </table>
+
 </div>
 
+
 <script>
-var firebaseConfig={apiKey:"AIzaSyDDUb0tp0llWLwZ875YgGc_7hMCP-KHKXk",authDomain:"inventario-94526.firebaseapp.com",databaseURL:"https://inventario-94526-default-rtdb.firebaseio.com",projectId:"inventario-94526"};
+
+/* =========================================================
+   CONFIGURACIÓN FIREBASE
+========================================================= */
+
+var firebaseConfig = {
+
+  apiKey:"AIzaSyDDUb0tp0llWLwZ875YgGc_7hMCP-KHKXk",
+
+  authDomain:"inventario-94526.firebaseapp.com",
+
+  databaseURL:"https://inventario-94526-default-rtdb.firebaseio.com",
+
+  projectId:"inventario-94526"
+
+};
+
+
 firebase.initializeApp(firebaseConfig);
-var db=firebase.database();
 
-var bodega='checc';
-var refActual=null;
-var idEditando=null;
+var db = firebase.database();
 
-function cambiarBodega(b){bodega=b;document.getElementById('tituloBodega').innerText=b.toUpperCase();escuchar();}
+
+/* =========================================================
+   VARIABLES DEL SISTEMA
+========================================================= */
+
+var bodega = "checc";
+
+var refActual = null;
+
+var idEditando = null;
+
+
+/* =========================================================
+   CAMBIAR BODEGA
+========================================================= */
+
+function cambiarBodega(b){
+
+  bodega = b;
+
+  document.getElementById("tituloBodega").innerText =
+    b.toUpperCase();
+
+  limpiar();
+
+  escuchar();
+
+}
+
+
+/* =========================================================
+   OBTENER STOCK DE UN PRODUCTO
+========================================================= */
+
+function obtenerStock(datos,nombre,excluirId){
+
+  var stock = 0;
+
+  var nombreBuscado =
+    String(nombre || "").trim().toLowerCase();
+
+
+  Object.keys(datos).forEach(function(id){
+
+    if(id === excluirId){
+      return;
+    }
+
+    var item = datos[id];
+
+    var nombreItem =
+      String(item.nombre || "").trim().toLowerCase();
+
+
+    if(nombreItem === nombreBuscado){
+
+      var cantidad =
+        Number(item.cant) || 0;
+
+
+      if(item.mov === "Ingreso"){
+
+        stock += cantidad;
+
+      }else if(item.mov === "Salida"){
+
+        stock -= cantidad;
+
+      }
+
+    }
+
+  });
+
+
+  return stock;
+
+}
+
+
+/* =========================================================
+   GUARDAR / MODIFICAR
+========================================================= */
 
 function guardar(){
-var data={fecha:fecha.value,tipo:tipo.value,nombre:nombre.value,mov:mov.value,cant:Number(cant.value),proyecto:proyecto.value,responsable:responsable.value};
-if(!data.nombre||!data.cant)return alert('Completa campos');
 
-if(idEditando){
-  db.ref(bodega+'/'+idEditando).set(data);
-  idEditando=null;
-}else{
-  db.ref(bodega).push(data);
+  var data = {
+
+    fecha:document.getElementById("fecha").value,
+
+    tipo:document.getElementById("tipo").value,
+
+    nombre:document.getElementById("nombre").value.trim(),
+
+    mov:document.getElementById("mov").value,
+
+    cant:Number(document.getElementById("cant").value),
+
+    proyecto:document.getElementById("proyecto").value.trim(),
+
+    responsable:document.getElementById("responsable").value.trim()
+
+  };
+
+
+  /* VALIDACIONES */
+
+  if(!data.fecha){
+
+    alert("Selecciona una fecha.");
+
+    return;
+
+  }
+
+
+  if(!data.nombre){
+
+    alert("Escribe el nombre del artículo.");
+
+    return;
+
+  }
+
+
+  if(!data.cant || data.cant <= 0){
+
+    alert("La cantidad debe ser mayor que 0.");
+
+    return;
+
+  }
+
+
+  /* =====================================================
+     VALIDAR STOCK PARA SALIDA
+  ===================================================== */
+
+  db.ref(bodega).once("value",function(snapshot){
+
+    var datos =
+      snapshot.val() || {};
+
+
+    /*
+       Obtenemos el stock actual.
+
+       Si estamos editando, excluimos el registro
+       que estamos modificando para evitar duplicarlo.
+    */
+
+    var stockActual =
+      obtenerStock(
+        datos,
+        data.nombre,
+        idEditando
+      );
+
+
+    /*
+       Si el movimiento es SALIDA,
+       comprobamos que exista suficiente stock.
+    */
+
+    if(data.mov === "Salida"){
+
+      if(data.cant > stockActual){
+
+        alert(
+          "NO HAY SUFICIENTE STOCK.\n\n" +
+
+          "Artículo: " +
+          data.nombre +
+
+          "\nStock disponible: " +
+          stockActual +
+
+          "\nCantidad solicitada: " +
+          data.cant
+        );
+
+        return;
+
+      }
+
+    }
+
+
+    /* =================================================
+       GUARDAR NUEVO REGISTRO
+    ================================================= */
+
+    if(idEditando){
+
+      db.ref(
+        bodega + "/" + idEditando
+      ).set(data,function(error){
+
+        if(error){
+
+          alert(
+            "No se pudo modificar el registro."
+          );
+
+          return;
+
+        }
+
+
+        idEditando = null;
+
+        document.getElementById(
+          "modoEdicion"
+        ).style.display = "none";
+
+
+        limpiar();
+
+      });
+
+
+    }else{
+
+      db.ref(bodega).push(data,function(error){
+
+        if(error){
+
+          alert(
+            "No se pudo guardar el registro."
+          );
+
+          return;
+
+        }
+
+        limpiar();
+
+      });
+
+    }
+
+  });
+
 }
 
-limpiar();
+
+/* =========================================================
+   LIMPIAR FORMULARIO
+========================================================= */
+
+function limpiar(){
+
+  document.getElementById("fecha").value = "";
+
+  document.getElementById("tipo").value = "Material";
+
+  document.getElementById("nombre").value = "";
+
+  document.getElementById("mov").value = "Ingreso";
+
+  document.getElementById("cant").value = "";
+
+  document.getElementById("proyecto").value = "";
+
+  document.getElementById("responsable").value = "";
+
+  idEditando = null;
+
+  document.getElementById(
+    "modoEdicion"
+  ).style.display = "none";
+
 }
 
-function limpiar(){nombre.value='';cant.value='';}
 
-function eliminar(id){if(confirm('Eliminar registro?'))db.ref(bodega+'/'+id).remove();}
+/* =========================================================
+   EDITAR REGISTRO
+========================================================= */
 
 function editar(id){
-  db.ref(bodega+'/'+id).once('value',function(snap){
-    var data=snap.val();
-    fecha.value=data.fecha;
-    tipo.value=data.tipo;
-    nombre.value=data.nombre;
-    mov.value=data.mov;
-    cant.value=data.cant;
-    proyecto.value=data.proyecto;
-    responsable.value=data.responsable;
-    idEditando=id;
+
+  db.ref(
+    bodega + "/" + id
+  ).once("value",function(snapshot){
+
+    var data =
+      snapshot.val();
+
+
+    if(!data){
+
+      alert(
+        "El registro ya no existe."
+      );
+
+      return;
+
+    }
+
+
+    document.getElementById("fecha").value =
+      data.fecha || "";
+
+
+    document.getElementById("tipo").value =
+      data.tipo || "Material";
+
+
+    document.getElementById("nombre").value =
+      data.nombre || "";
+
+
+    document.getElementById("mov").value =
+      data.mov || "Ingreso";
+
+
+    document.getElementById("cant").value =
+      data.cant || "";
+
+
+    document.getElementById("proyecto").value =
+      data.proyecto || "";
+
+
+    document.getElementById("responsable").value =
+      data.responsable || "";
+
+
+    idEditando = id;
+
+
+    document.getElementById(
+      "modoEdicion"
+    ).style.display = "block";
+
+
+    /*
+       Llevar al usuario hacia el formulario
+       para que vea que está editando.
+    */
+
+    window.scrollTo({
+      top:document.querySelector(".container").offsetTop,
+      behavior:"smooth"
+    });
+
   });
+
 }
+
+
+/* =========================================================
+   ELIMINAR REGISTRO
+========================================================= */
+
+function eliminar(id){
+
+  if(
+    confirm(
+      "¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR ESTE REGISTRO?"
+    )
+  ){
+
+    db.ref(
+      bodega + "/" + id
+    ).remove(function(error){
+
+      if(error){
+
+        alert(
+          "No se pudo eliminar el registro."
+        );
+
+      }
+
+    });
+
+  }
+
+}
+
+
+/* =========================================================
+   MOSTRAR TABLA
+========================================================= */
 
 function escuchar(){
-if(refActual){refActual.off();}
-refActual=db.ref(bodega);
 
-refActual.on('value',function(snap){
-var datos=snap.val()||{};
-var keys=Object.keys(datos);
-var arr=Object.values(datos);
+  if(refActual){
 
-var filtro=buscar.value.toLowerCase();
+    refActual.off();
 
-var tabla=document.getElementById('tabla');
-tabla.innerHTML='';
-
-var stockGlobal={};
-
-for(var i=0;i<arr.length;i++){
-var item=arr[i];
-
-if(!item.nombre.toLowerCase().includes(filtro)) continue;
-
-if(!stockGlobal[item.nombre]) stockGlobal[item.nombre]=0;
-
-if(item.mov==='Ingreso'){
-  stockGlobal[item.nombre]+=item.cant;
-}else{
-  if(stockGlobal[item.nombre]>=item.cant){
-    stockGlobal[item.nombre]-=item.cant;
   }
+
+
+  refActual =
+    db.ref(bodega);
+
+
+  refActual.on(
+    "value",
+    function(snapshot){
+
+      var datos =
+        snapshot.val() || {};
+
+
+      var keys =
+        Object.keys(datos);
+
+
+      var tabla =
+        document.getElementById("tabla");
+
+
+      tabla.innerHTML = "";
+
+
+      /*
+         ====================================================
+         PRIMERO CALCULAMOS EL STOCK DE TODOS LOS ARTÍCULOS
+         ====================================================
+      */
+
+      var stockGlobal = {};
+
+
+      keys.forEach(function(id){
+
+        var item =
+          datos[id];
+
+
+        var nombre =
+          String(
+            item.nombre || ""
+          ).trim();
+
+
+        var clave =
+          nombre.toLowerCase();
+
+
+        if(!stockGlobal[clave]){
+
+          stockGlobal[clave] = {
+
+            nombre:nombre,
+
+            stock:0,
+
+            registros:0
+
+          };
+
+        }
+
+
+        var cantidad =
+          Number(item.cant) || 0;
+
+
+        if(item.mov === "Ingreso"){
+
+          stockGlobal[clave].stock +=
+            cantidad;
+
+        }
+
+
+        if(item.mov === "Salida"){
+
+          stockGlobal[clave].stock -=
+            cantidad;
+
+        }
+
+
+        stockGlobal[clave].registros++;
+
+      });
+
+
+      /*
+         ====================================================
+         MOSTRAR AVISO DE STOCK BAJO
+         ====================================================
+      */
+
+      var aviso =
+        document.getElementById(
+          "avisoStock"
+        );
+
+
+      var productosBajos = [];
+
+
+      Object.keys(stockGlobal).forEach(
+        function(clave){
+
+          var producto =
+            stockGlobal[clave];
+
+
+          if(
+            producto.stock >= 0 &&
+            producto.stock <= 4
+          ){
+
+            productosBajos.push(
+              producto.nombre +
+              " (" +
+              producto.stock +
+              ")"
+            );
+
+          }
+
+        }
+      );
+
+
+      if(productosBajos.length > 0){
+
+        aviso.style.display = "block";
+
+        aviso.innerHTML =
+          "⚠️ STOCK BAJO: " +
+          productosBajos.join(", ");
+
+      }else{
+
+        aviso.style.display = "none";
+
+        aviso.innerHTML = "";
+
+      }
+
+
+      /*
+         ====================================================
+         BUSCADOR
+         ====================================================
+      */
+
+      var filtro =
+        document.getElementById(
+          "buscar"
+        ).value
+        .trim()
+        .toLowerCase();
+
+
+      /*
+         ====================================================
+         AHORA MOSTRAMOS LOS REGISTROS
+         DESPUÉS DE HABER CALCULADO EL STOCK
+         ====================================================
+      */
+
+      keys.forEach(function(id){
+
+        var item =
+          datos[id];
+
+
+        var nombre =
+          String(
+            item.nombre || ""
+          ).trim();
+
+
+        var clave =
+          nombre.toLowerCase();
+
+
+        /*
+           Si hay texto en el buscador,
+           solamente mostramos coincidencias.
+        */
+
+        if(
+          filtro !== "" &&
+          !clave.includes(filtro)
+        ){
+
+          return;
+
+        }
+
+
+        /*
+           STOCK ACTUAL REAL DEL PRODUCTO
+        */
+
+        var stock =
+          stockGlobal[clave]
+          ? stockGlobal[clave].stock
+          : 0;
+
+
+        /*
+           Nunca mostramos stock negativo.
+        */
+
+        if(stock < 0){
+
+          stock = 0;
+
+        }
+
+
+        var claseStock =
+          stock <= 4
+          ? "stock-bajo"
+          : "stock-normal";
+
+
+        var fila =
+          "<tr>" +
+
+          "<td>" +
+          (item.fecha || "") +
+          "</td>" +
+
+          "<td>" +
+          (item.tipo || "") +
+          "</td>" +
+
+          "<td>" +
+          (item.nombre || "") +
+          "</td>" +
+
+          "<td>" +
+          (item.mov || "") +
+          "</td>" +
+
+          "<td>" +
+          (item.cant || 0) +
+          "</td>" +
+
+          "<td>" +
+          (item.proyecto || "") +
+          "</td>" +
+
+          "<td>" +
+          (item.responsable || "") +
+          "</td>" +
+
+          "<td class=\"" +
+          claseStock +
+          "\">" +
+
+          stock +
+
+          "</td>" +
+
+          "<td>" +
+
+          "<button " +
+
+          "class=\"btn-editar\" " +
+
+          "onclick=\"editar('" +
+          id +
+          "')\">" +
+
+          "✏️ Editar" +
+
+          "</button>" +
+
+          "<br>" +
+
+          "<button " +
+
+          "class=\"btn-eliminar\" " +
+
+          "onclick=\"eliminar('" +
+          id +
+          "')\">" +
+
+          "🗑️ Eliminar" +
+
+          "</button>" +
+
+          "</td>" +
+
+          "</tr>";
+
+
+        tabla.innerHTML += fila;
+
+      });
+
+
+    }
+  );
+
 }
 
-var stock=stockGlobal[item.nombre];
-var id=keys[i];
 
-var color = stock <= 4 ? 'red' : 'black';
-
-var fila='<tr>'+
-'<td>'+item.fecha+'</td>'+
-'<td>'+item.tipo+'</td>'+
-'<td>'+item.nombre+'</td>'+
-'<td>'+item.mov+'</td>'+
-'<td>'+item.cant+'</td>'+
-'<td>'+item.proyecto+'</td>'+
-'<td>'+item.responsable+'</td>'+
-'<td style="font-weight:bold;color:'+color+'">'+stock+'</td>'+
-'<td>'+
-'<button onclick="editar(\''+id+'\')">Editar</button><br>'+
-'<button onclick="eliminar(\''+id+'\')">Eliminar</button>'+
-'</td>'+
-'</tr>';
-
-tabla.innerHTML+=fila;
-}
-});
-}
+/* =========================================================
+   INICIAR SISTEMA
+========================================================= */
 
 escuchar();
+
 </script>
+
 </body>
 </html>
