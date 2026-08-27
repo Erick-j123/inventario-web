@@ -133,6 +133,8 @@ th,td{
   background:#b91c1c;
 }
 
+/* Stock entre 0 y 4 */
+
 .stock-bajo{
   color:red;
   font-weight:bold;
@@ -143,16 +145,7 @@ th,td{
   font-weight:bold;
 }
 
-.aviso-stock{
-  background:#fee2e2;
-  color:#991b1b;
-  border:1px solid #ef4444;
-  padding:10px;
-  border-radius:8px;
-  margin-top:10px;
-  font-weight:bold;
-  display:none;
-}
+/* Aviso visual de edición */
 
 .modo-edicion{
   background:#dbeafe;
@@ -299,9 +292,6 @@ Cancelar
 </button>
 
 </div>
-
-
-<div id="avisoStock" class="aviso-stock"></div>
 
 
 <table>
@@ -572,7 +562,7 @@ function guardar(){
 
 
     /* =================================================
-       GUARDAR NUEVO REGISTRO
+       MODIFICAR REGISTRO EXISTENTE
     ================================================= */
 
     if(idEditando){
@@ -605,6 +595,10 @@ function guardar(){
 
 
     }else{
+
+      /* =================================================
+         CREAR NUEVO REGISTRO
+      ================================================= */
 
       db.ref(bodega).push(data,function(error){
 
@@ -719,14 +713,15 @@ function editar(id){
     ).style.display = "block";
 
 
-    /*
-       Llevar al usuario hacia el formulario
-       para que vea que está editando.
-    */
-
     window.scrollTo({
-      top:document.querySelector(".container").offsetTop,
+
+      top:
+        document.querySelector(
+          ".container"
+        ).offsetTop,
+
       behavior:"smooth"
+
     });
 
   });
@@ -803,7 +798,7 @@ function escuchar(){
 
       /*
          ====================================================
-         PRIMERO CALCULAMOS EL STOCK DE TODOS LOS ARTÍCULOS
+         CALCULAR STOCK DE TODOS LOS ARTÍCULOS
          ====================================================
       */
 
@@ -868,63 +863,6 @@ function escuchar(){
 
       /*
          ====================================================
-         MOSTRAR AVISO DE STOCK BAJO
-         ====================================================
-      */
-
-      var aviso =
-        document.getElementById(
-          "avisoStock"
-        );
-
-
-      var productosBajos = [];
-
-
-      Object.keys(stockGlobal).forEach(
-        function(clave){
-
-          var producto =
-            stockGlobal[clave];
-
-
-          if(
-            producto.stock >= 0 &&
-            producto.stock <= 4
-          ){
-
-            productosBajos.push(
-              producto.nombre +
-              " (" +
-              producto.stock +
-              ")"
-            );
-
-          }
-
-        }
-      );
-
-
-      if(productosBajos.length > 0){
-
-        aviso.style.display = "block";
-
-        aviso.innerHTML =
-          "⚠️ STOCK BAJO: " +
-          productosBajos.join(", ");
-
-      }else{
-
-        aviso.style.display = "none";
-
-        aviso.innerHTML = "";
-
-      }
-
-
-      /*
-         ====================================================
          BUSCADOR
          ====================================================
       */
@@ -939,8 +877,7 @@ function escuchar(){
 
       /*
          ====================================================
-         AHORA MOSTRAMOS LOS REGISTROS
-         DESPUÉS DE HABER CALCULADO EL STOCK
+         MOSTRAR REGISTROS
          ====================================================
       */
 
@@ -961,7 +898,7 @@ function escuchar(){
 
 
         /*
-           Si hay texto en el buscador,
+           Si existe texto en el buscador,
            solamente mostramos coincidencias.
         */
 
@@ -976,7 +913,7 @@ function escuchar(){
 
 
         /*
-           STOCK ACTUAL REAL DEL PRODUCTO
+           STOCK ACTUAL DEL PRODUCTO
         */
 
         var stock =
@@ -986,7 +923,7 @@ function escuchar(){
 
 
         /*
-           Nunca mostramos stock negativo.
+           Evitar mostrar valores negativos.
         */
 
         if(stock < 0){
@@ -995,6 +932,13 @@ function escuchar(){
 
         }
 
+
+        /*
+           Si el stock es de 0 a 4,
+           solamente cambia el color.
+           
+           NO aparece ningún aviso.
+        */
 
         var claseStock =
           stock <= 4
